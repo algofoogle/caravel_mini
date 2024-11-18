@@ -199,12 +199,13 @@ module user_project_wrapper #(
   // IRQ selection
   assign user_irq    = proj_user_irq[configuration];
 
-  //assigning unconnected outputs
+  // Assigning unconnected outputs, i.e. those used for project selection,
+  // configured to make them work with pullups in GPIO_MODE_USER_STD_INPUT_PULLUP:
   genvar j;
   generate
     for (j = `MPRJ_IO_PADS - CFG_BITS; j < `MPRJ_IO_PADS; j = j + 1) begin
-      assign io_out[j] = 0;
-      assign io_oeb[j] = 1;
+      assign io_oeb[j] = 0; // Output buffer needs to be enabled, for the pull-up to work.
+      assign io_out[j] = 1; // Activates weak pull-up (0 would be STRONG pull-down).
     end
   endgenerate
 
